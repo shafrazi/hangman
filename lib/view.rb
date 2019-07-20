@@ -8,8 +8,10 @@ class View
   end
 
   def display
+    puts "        "
     puts display_word.split("").join(" ")
     puts "+++++++++++++++"
+    puts "        "
     puts "Incorrect guesses: #{incorrect_guesses.join(", ")}"
   end
 
