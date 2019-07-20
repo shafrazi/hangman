@@ -5,12 +5,22 @@
 # row5 = "       |"
 # row6 = "_______|"
 
-def check_length(word)
-  if word.length > 5 && word.length < 12
-    false
-  else
-    true
+def hide_word(word)
+  "-" * word.length
+end
+
+
+word = "shafrazi"
+display_word = hide_word(word)
+# display_array = display_word.split("")
+input = "a"
+
+p display_word
+
+word.split("").each_with_index do |letter, i|
+  if letter == input
+    display_word[i] = input
   end
 end
 
-p check_length("shafrghgjgjgjgjgjg")
+p display_word

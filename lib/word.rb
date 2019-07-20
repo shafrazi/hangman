@@ -4,11 +4,12 @@ class Word
     @word_gen = generate_word(dictionary_file)
   end
 
+  private
   def generate_word(dictionary_file)
     words_array = File.readlines(dictionary_file)
     word = ""
     while check_length(word)
-      word = words_array[random_num(words_array)].chomp
+      word = words_array[random_num(words_array)].chomp.downcase
     end
     return word
   end
