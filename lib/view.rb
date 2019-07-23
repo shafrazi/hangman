@@ -8,11 +8,12 @@ class View
   end
 
   def display
+    puts "+++++++++++++++++++++++++"
+    puts "Guess the word....?"
     puts "        "
     puts display_word.split("").join(" ")
-    puts "+++++++++++++++"
     puts "        "
-    puts "Incorrect guesses: #{incorrect_guesses.join(", ")}"
+    puts "Incorrect Guesses: #{incorrect_guesses.join(", ")}" if incorrect_no > 0
   end
 
   def check_guess(input)
@@ -43,11 +44,3 @@ class View
     "-" * word.length
   end
 end
-
-view = View.new("shafrazi")
-view.display
-view.check_guess("m")
-view.check_guess("m")
-view.check_guess("a")
-view.check_guess("t")
-view.display

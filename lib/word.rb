@@ -26,6 +26,3 @@ class Word
     end
   end
 end
-
-word_obj = Word.new("dictionary.txt")
-p word_obj.word_gen
