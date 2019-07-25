@@ -9,9 +9,10 @@
 #classes: Game, View, Word
 require_relative "word.rb"
 require_relative "view.rb"
+require "json"
 
 class Game
-  attr_accessor :word, :view, :no_of_guesses, :user_input
+  attr_accessor :word, :view, :no_of_guesses, :user_input, :game_over, :user_input
   def initialize(dictionary_file)
     @word = Word.new(dictionary_file).word_gen
     @view = View.new(@word)
@@ -29,6 +30,7 @@ class Game
       view.check_guess(@user_input)
       @no_of_guesses -= 1
     end
+    self.save_game
   end
 
   def game_over
@@ -46,8 +48,38 @@ class Game
       @game_over = true
     end
   end
+
+  def as_json
+    {word: @word, view: {original_word: view.original_word, display_word: view.display_word, incorrect_guesses: view.incorrect_guesses, incorrect_no: view.incorrect_no}, game_over: @game_over, no_of_guesses: @no_of_guesses, user_input: @user_input}
+  end
+
+  def self.from_json(file, dictionary_file)
+    json = File.read(file)
+    data = JSON.parse(json)
+    loaded_game = new(dictionary_file)
+    loaded_game.word = data["word"]
+    loaded_game.view.original_word = data["view"]["original_word"]
+    loaded_game.view.display_word = data["view"]["display_word"]
+    loaded_game.view.incorrect_guesses = data["view"]["incorrect_guesses"]
+    loaded_game.view.incorrect_no = data["view"]["incorrect_no"]
+    loaded_game.game_over = data["game_over"]
+    loaded_game.no_of_guesses = data["no_of_guesses"]
+    loaded_game.user_input = data["user_input"]
+    return loaded_game
+  end
+
+  def save_game
+    puts "Enter file name to save the game:"
+    file_name = gets.chomp
+    data = self.as_json
+    File.write("#{file_name}#{".json"}", JSON.dump(data))
+  end
 end
 
 dictionary_file = "dictionary.txt"
-game = Game.new(dictionary_file)
+# game = Game.new(dictionary_file)
+# game.start_game
+# game.save_game
+
+game = Game.from_json("save4.json", dictionary_file)
 game.start_game
