@@ -1,6 +1,0 @@
-shafrazi
-incorrect
-hangman
-marshal
-document
-pomodoro

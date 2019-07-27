@@ -21,16 +21,35 @@ class Game
     @user_input = ""
   end
 
+  def new_game
+    puts "Welcome to Hangman!"
+    puts "Choose an option:"
+    puts "   1. Start new game"
+    puts "   2. Load a saved game"
+    input = gets.chomp.to_i
+    if input == 1
+      start_game
+    elsif input == 2
+      load_game
+    else
+      puts "Invalid input"
+    end
+  end
+
   def start_game
     while !game_over
       puts "No of available guesses: #{@no_of_guesses}"
       view.display
-      puts "Enter your guess:"
+      puts "Enter your guess or if you wish to save the game enter 'save game':"
       @user_input = gets.chomp
-      view.check_guess(@user_input)
-      @no_of_guesses -= 1
+      if @user_input == "save game"
+        self.save_game
+        break
+      else
+        view.check_guess(@user_input)
+        @no_of_guesses -= 1
+      end
     end
-    self.save_game
   end
 
   def game_over
@@ -62,24 +81,42 @@ class Game
     loaded_game.view.display_word = data["view"]["display_word"]
     loaded_game.view.incorrect_guesses = data["view"]["incorrect_guesses"]
     loaded_game.view.incorrect_no = data["view"]["incorrect_no"]
-    loaded_game.game_over = data["game_over"]
+    # loaded_game.game_over = data["game_over"]
     loaded_game.no_of_guesses = data["no_of_guesses"]
-    loaded_game.user_input = data["user_input"]
+    # loaded_game.user_input = data["user_input"]
     return loaded_game
+  end
+
+  def load_game
+    directory = "saved_games"
+    dictionary_file = "dictionary.txt"
+    files_hash = {}
+    files_array = Dir.children(directory)
+
+    files_array.each_with_index do |file, i|
+      if !files_hash[i+1]
+        files_hash[i+1] = file
+      end
+    end
+    puts "Select a save file to load:"
+    files_hash.each do |key, value|
+      puts "  #{key}. #{value.split(".")[0]}"
+    end
+
+    selection = gets.chomp.to_i
+    loaded_game = Game.from_json("saved_games/#{files_hash[selection]}", dictionary_file)
+    loaded_game.start_game
   end
 
   def save_game
     puts "Enter file name to save the game:"
     file_name = gets.chomp
     data = self.as_json
-    File.write("#{file_name}#{".json"}", JSON.dump(data))
+    File.write("saved_games/#{file_name}#{".json"}", JSON.dump(data))
   end
 end
 
 dictionary_file = "dictionary.txt"
-# game = Game.new(dictionary_file)
-# game.start_game
-# game.save_game
+game = Game.new(dictionary_file)
 
-game = Game.from_json("save4.json", dictionary_file)
-game.start_game
+game.new_game
